@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import assets, { userDummyData, type User } from "../../assets/assets";
 import { cn } from "../../lib/utils";
 
@@ -8,8 +7,6 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ selectedUser, setSelectedUser }: SidebarProps) => {
-   const navigate = useNavigate();
-
    return (
       <div
          className={cn(
@@ -39,7 +36,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }: SidebarProps) => {
             </div>
 
             {/* Search Bar */}
-            <div className="mt-5 flex items-center gap-2 rounded-full bg-[#282142] px-4 py-3">
+            <div className="my-5 flex items-center gap-2 rounded-full bg-[#282142] px-4 py-3">
                <img src={assets.search_icon} alt="Search" className="w-3" />
                <input
                   type="text"

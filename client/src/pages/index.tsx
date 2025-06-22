@@ -28,12 +28,7 @@ const Homepage = () => {
                setSelectedUser={setSelectedUser}
                selectedUser={selectedUser}
             />
-            {selectedUser && (
-               <RightSidebar
-                  setSelectedUser={setSelectedUser}
-                  selectedUser={selectedUser}
-               />
-            )}
+            {selectedUser && <RightSidebar selectedUser={selectedUser} />}
          </div>
       </div>
    );
