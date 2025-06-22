@@ -14,3 +14,7 @@
 ::-webkit-scrollbar {
    @apply hidden;
 }
+
+.btn-primary {
+   @apply cursor-pointer rounded-full bg-gradient-to-r from-purple-400 to-violet-600 p-2 text-lg text-white;
+}
