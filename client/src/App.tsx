@@ -10,11 +10,9 @@ const App = () => {
       <div className="bg-[url(./assets/bgImage.svg)] bg-contain">
          <Routes>
             <Route path="/" element={<Homepage />} />
-            <Route path="auth">
-               <Route path="login" element={<LoginPage />} />
-               <Route path="register" element={<RegisterPage />} />
-               <Route path="profile" element={<ProfilePage />} />
-            </Route>
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="profile" element={<ProfilePage />} />
          </Routes>
       </div>
    );
