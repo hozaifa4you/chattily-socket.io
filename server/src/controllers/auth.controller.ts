@@ -121,4 +121,12 @@ const signin = async (req: Request, res: Response) => {
    }
 };
 
-export { signup, signin };
+const signout = async (req: Request, res: Response) => {
+   if (req.user) {
+      req.user = undefined;
+   }
+
+   return res.status(200).json({ success: true });
+};
+
+export { signup, signin, signout };
