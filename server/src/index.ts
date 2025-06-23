@@ -1,10 +1,11 @@
 import { log } from 'console';
 import 'dotenv/config';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import { frontend_url } from './config/env';
 import http from 'http';
+import path from 'path';
 
 const app = express();
 const server = http.createServer(app);
@@ -19,6 +20,11 @@ const middlewares = [
    express.urlencoded({ extended: false }),
 ];
 app.use(middlewares);
+app.use('/public', express.static(path.join(process.cwd(), '/public')));
+
+app.get('/', (_req: Request, res: Response) => {
+   res.send('Server is running...');
+});
 
 server.listen(process.env.PORT ?? 3030, () => {
    log(`Server is running on port ${process.env.PORT ?? 3030}`);
