@@ -3,7 +3,12 @@ import path from 'path';
 import fs from 'fs';
 import multer, { FileFilterCallback } from 'multer';
 
-export const uploadPath = path.join(process.cwd(), 'public', 'uploads');
+export const uploadPath = path.join(
+   process.cwd(),
+   'public',
+   'uploads',
+   'avatars',
+);
 
 const storage = multer.diskStorage({
    destination: (_req, _file, cb) => {
@@ -22,7 +27,7 @@ const storage = multer.diskStorage({
    },
 });
 
-const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
 
 const fileFilter = (
    _req: Request,

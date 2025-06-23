@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.local
 /src/generated/prisma
+
+# omit static
+public

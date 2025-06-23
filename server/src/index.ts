@@ -6,6 +6,7 @@ import cors from 'cors';
 import { frontend_url } from './config/env';
 import http from 'http';
 import path from 'path';
+import { authRoutes } from './routes/auth.route';
 
 const app = express();
 const server = http.createServer(app);
@@ -25,6 +26,8 @@ app.use('/public', express.static(path.join(process.cwd(), '/public')));
 app.get('/', (_req: Request, res: Response) => {
    res.send('Server is running...');
 });
+
+app.use('/api/v1/auth', authRoutes);
 
 server.listen(process.env.PORT ?? 3030, () => {
    log(`Server is running on port ${process.env.PORT ?? 3030}`);

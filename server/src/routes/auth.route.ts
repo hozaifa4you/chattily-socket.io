@@ -1,7 +1,13 @@
-import { Router } from 'express';
+import { signin, signup } from '@/controllers/user.controller';
+import express, { RequestHandler, type Router } from 'express';
 
-const router = Router();
+const authRoutes: Router = express.Router();
 
-router.get('/');
+authRoutes.post('/login', signin as unknown as RequestHandler);
+authRoutes.post('/register', signup as unknown as RequestHandler);
 
-export { router };
+authRoutes.get('/ping-pong', (_req, res) => {
+   res.send('Pinkg pong');
+});
+
+export { authRoutes };
