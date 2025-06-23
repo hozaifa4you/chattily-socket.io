@@ -3,7 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { frontendUrl } from './config/env';
+import { frontend_url } from './config/env';
 import http from 'http';
 
 const app = express();
@@ -12,10 +12,10 @@ const server = http.createServer(app);
 const middlewares = [
    morgan('dev'),
    cors({
-      origin: frontendUrl,
+      origin: frontend_url,
       credentials: true,
    }),
-   express.json({ limit: '2mb' }),
+   express.json({ limit: '4mb' }),
    express.urlencoded({ extended: false }),
 ];
 app.use(middlewares);

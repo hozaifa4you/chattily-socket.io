@@ -1,19 +1,13 @@
-import { PrismaClient } from '../generated/prisma';
+import { jwt_expires_in, jwt_secret } from '@/config/env';
+import jwt from 'jsonwebtoken';
+import { type StringValue } from 'ms';
 
-declare global {
-   var cachedPrisma: PrismaClient;
-}
+const generateToken = async (userId: string) => {
+   const token = jwt.sign({ userId }, jwt_secret, {
+      expiresIn: jwt_expires_in as StringValue,
+   });
 
-let prisma: PrismaClient;
-if (process.env.NODE_ENV === 'production') {
-   prisma = new PrismaClient();
-} else {
-   if (!global.cachedPrisma) {
-      global.cachedPrisma = new PrismaClient({
-         log: ['error', 'warn'],
-      });
-   }
-   prisma = global.cachedPrisma;
-}
+   return token;
+};
 
-export const db = prisma;
+export { generateToken };
