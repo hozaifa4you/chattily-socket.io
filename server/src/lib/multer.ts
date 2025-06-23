@@ -13,7 +13,7 @@ export const uploadPath = path.join(
 const storage = multer.diskStorage({
    destination: (_req, _file, cb) => {
       if (!fs.existsSync(uploadPath)) {
-         fs.mkdirSync(uploadPath);
+         fs.mkdirSync(uploadPath, { recursive: true });
       }
 
       cb(null, uploadPath);
@@ -22,8 +22,11 @@ const storage = multer.diskStorage({
       const ext = path.extname(file.originalname);
       const baseName = path.basename(file.originalname, ext);
       const timestamp = Date.now();
-      const sanitizedBase = baseName.replace(/\s+/g, '_').toLowerCase();
-      cb(null, `${sanitizedBase}-${timestamp}${ext}`);
+      const sanitizedBase = baseName.replace(/\s+/g, '').toLowerCase();
+
+      const filename = `${sanitizedBase}-${timestamp}${ext}`;
+
+      cb(null, filename);
    },
 });
 
