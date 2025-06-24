@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { log } from 'console';
-import { generateToken } from '@/lib/utils';
+import { generateToken, getUrlPath } from '@/lib/utils';
 
 const signup = async (req: Request, res: Response) => {
    const body = req.body;
@@ -121,4 +121,24 @@ const signin = async (req: Request, res: Response) => {
    }
 };
 
-export { signup, signin };
+const authCheck = async (req: Request, res: Response) => {
+   const auth = req.user;
+
+   if (!auth) {
+      return res.status(401).json({
+         success: false,
+         message: 'Unauthorized',
+      });
+   }
+
+   const data = { ...auth };
+
+   if (auth?.profilePic) {
+      const profileUrl = getUrlPath(auth.profilePic, 'avatars');
+      data.profilePic = profileUrl;
+   }
+
+   return res.status(200).json({ user: data, success: true });
+};
+
+export { signup, signin, authCheck };

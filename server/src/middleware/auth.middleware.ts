@@ -25,7 +25,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
             createdAt: true,
             updatedAt: true,
             bio: true,
-            profilePic: true,
          },
       });
       if (!user) {

@@ -9,6 +9,6 @@
       "rootDirs": ["src"],
       "moduleResolution": "nodenext"
    },
-   "include": ["src/**/*", "test/**/*"],
+   "include": ["src/**/*", "test/**/*", "../client/src/lib/socket.ts"],
    "exclude": ["node_modules", "dist"]
 }
