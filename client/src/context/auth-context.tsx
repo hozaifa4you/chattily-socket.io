@@ -16,14 +16,22 @@ type AuthContextType = {
    onlineUsers?: string[];
    socket?: Socket;
    setToken: (token?: string) => void;
-   setUser: (user: User) => void;
+   setUser: (user?: User) => void;
+   connectSocket: (user: User) => void;
+   setOnlineUsers: (userIds: string[]) => void;
 };
 
 const initialContext: AuthContextType = {
-   setToken: function (token?: string): void {
+   setToken: function (): void {
       throw new Error("Function not implemented.");
    },
-   setUser: function (user: User): void {
+   setUser: function (): void {
+      throw new Error("Function not implemented.");
+   },
+   connectSocket: function (user: User): void {
+      throw new Error("Function not implemented.");
+   },
+   setOnlineUsers: function (): void {
       throw new Error("Function not implemented.");
    },
 };
@@ -77,6 +85,8 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
       onlineUsers,
       setToken,
       setUser,
+      connectSocket,
+      setOnlineUsers,
    };
 
    useEffect(() => {

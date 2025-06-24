@@ -9,7 +9,8 @@ const LoginPage = () => {
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
    const [isSubmitted, setIsSubmitted] = useState(false);
-   const { setToken, token, user, setUser } = useContext(AuthContext);
+   const { setToken, token, user, setUser, connectSocket } =
+      useContext(AuthContext);
    const navigate = useNavigate();
 
    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,6 +27,7 @@ const LoginPage = () => {
          setToken(data.token);
          setUser(data.user);
          localStorage.setItem("token", data.token);
+         // connectSocket(data.user);
          toast.success("Login Successful", { description: data.message });
       } catch (error) {
          toast.error("Login Failed", {
