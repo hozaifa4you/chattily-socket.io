@@ -11,9 +11,34 @@ import { uploadRouter } from '@/routes/upload.route';
 import { profileRoutes } from '@/routes/profile.route';
 import { messageRoutes } from '@/routes/message.route';
 import { userRoutes } from '@/routes/user.route';
+import { Server } from 'socket.io';
 
 const app = express();
 const server = http.createServer(app);
+export const io = new Server(server, {
+   cors: { origin: frontend_url, credentials: true },
+});
+
+// store online sockets
+export const userSocketMap: Record<string, string> = {};
+
+io.on('connection', (socket) => {
+   const userId = socket.handshake.query.userId as string;
+
+   log('User connected: ', userId);
+
+   if (userId) {
+      userSocketMap[userId] = socket.id;
+   }
+
+   io.emit('getOnlineUsers', Object.keys(userSocketMap));
+
+   socket.on('disconnect', () => {
+      log('User disconnected: ', userId);
+      delete userSocketMap[userId];
+      io.emit('getOnlineUsers', Object.keys(userSocketMap));
+   });
+});
 
 const middlewares = [
    morgan('dev'),

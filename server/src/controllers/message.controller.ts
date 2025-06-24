@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { log } from 'console';
 import { Request, Response } from 'express';
 import { z } from 'zod';
+import { io, userSocketMap } from '@/index';
 
 const getMessages = async (req: Request, res: Response) => {
    const auth = req.user;
@@ -94,6 +95,12 @@ const sendMessage = async (req: Request, res: Response) => {
             receiverId: targetId,
          },
       });
+
+      // using socket
+      const receiverSocketId = userSocketMap[targetId];
+      if (receiverSocketId) {
+         io.to(receiverSocketId).emit('newMessage', message);
+      }
 
       return res.status(200).json(message);
    } catch (error) {
