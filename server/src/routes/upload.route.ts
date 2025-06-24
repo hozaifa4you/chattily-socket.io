@@ -6,7 +6,7 @@ import express, { type Router, RequestHandler } from 'express';
 const uploadRouter: Router = express.Router();
 
 uploadRouter.post(
-   '/avatar',
+   '/avatars',
    auth as unknown as RequestHandler,
    uploader('avatars').single('avatar'),
    avatarUploader as unknown as RequestHandler,

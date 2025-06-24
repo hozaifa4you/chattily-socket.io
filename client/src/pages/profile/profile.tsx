@@ -1,15 +1,102 @@
-import { useState } from "react";
+import { useContext, useEffect, useState, type ChangeEvent } from "react";
 import assets from "../../assets/assets";
 import { cn } from "../../lib/utils";
+import { AuthContext } from "../../context/auth-context";
+import { axiosInstance } from "../../lib/axios";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 const ProfilePage = () => {
-   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-   const [name, setName] = useState("Martin Johnson");
-   const [bio, setBio] = useState("Hello! I'm using Chattily.");
+   const [isLoading, setIsLoading] = useState(false);
+   const [isUploading, setIsUploading] = useState(false);
+   const { token, setUser } = useContext(AuthContext);
+   const [name, setName] = useState("");
+   const [bio, setBio] = useState("");
+   const [profilePic, setProfilePic] = useState<string>("");
+
+   console.log(profilePic);
 
    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
       e.preventDefault();
+      setIsLoading(true);
+
+      try {
+         const { data } = await axiosInstance.put(
+            "/profile",
+            { fullName: name, bio, profilePic },
+            { headers: { token } },
+         );
+
+         setUser(data);
+
+         toast.success("Profile Updated", {
+            description: "Your profile has been updated successfully.",
+         });
+      } catch (error) {
+         console.log(error);
+
+         if (error instanceof AxiosError) {
+            toast.error("Profile Update Failed", {
+               description:
+                  error.response?.data.message ?? "Something went wrong.",
+            });
+         }
+      } finally {
+         setIsLoading(false);
+      }
    }
+
+   const changeAvatar = async (event: ChangeEvent<HTMLInputElement>) => {
+      setIsUploading(true);
+      if (event.target.files) {
+         const file = event.target.files[0];
+
+         try {
+            const formData = new FormData();
+            formData.append("avatar", file);
+
+            const { data } = await axiosInstance.post(
+               "/uploads/avatars",
+               formData,
+               { headers: { token, "Content-Type": "multipart/form-data" } },
+            );
+
+            console.log(data);
+
+            setProfilePic(data.avatarUrl);
+
+            toast.success("Avatar Upload", {
+               description: "Avatar successfully uploaded",
+            });
+         } catch (error) {
+            console.log(error);
+
+            if (error instanceof AxiosError) {
+               toast.error("Avatar Upload Failed", {
+                  description:
+                     error.response?.data.message ??
+                     "File size not more than 500kb.",
+               });
+            }
+         } finally {
+            setIsUploading(false);
+         }
+      }
+   };
+
+   useEffect(() => {
+      const getProfile = async () => {
+         const { data } = await axiosInstance.get("/profile", {
+            headers: { token },
+         });
+
+         setName(data.fullName);
+         setBio(data.bio ?? "");
+         setProfilePic(data.profilePic ?? "");
+      };
+
+      getProfile();
+   }, [token]);
 
    return (
       <div className="flex min-h-screen items-center justify-center bg-cover bg-no-repeat">
@@ -24,27 +111,17 @@ const ProfilePage = () => {
                   className="flex cursor-pointer items-center gap-3"
                >
                   <input
-                     onChange={(e) =>
-                        setSelectedImage(
-                           e.target.files && e.target.files[0]
-                              ? e.target.files[0]
-                              : null,
-                        )
-                     }
+                     onChange={changeAvatar}
                      type="file"
                      id="avatar"
                      accept="image/*"
                      hidden
                   />
                   <img
-                     src={
-                        selectedImage
-                           ? URL.createObjectURL(selectedImage)
-                           : assets.avatar_icon
-                     }
+                     src={profilePic ? profilePic : assets.avatar_icon}
                      alt="User"
-                     className={cn("size-12", {
-                        "rounded-full": selectedImage,
+                     className={cn("size-12 object-cover object-center", {
+                        "rounded-full": profilePic,
                      })}
                   />
                   Upload Profile Image
@@ -67,9 +144,16 @@ const ProfilePage = () => {
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   required
+                  placeholder="Your bio"
                ></textarea>
 
-               <button className="btn-primary">Save</button>
+               <button className="btn-primary">
+                  {isLoading
+                     ? "Saving.."
+                     : isUploading
+                       ? "Uploading.."
+                       : "Save"}
+               </button>
             </form>
             <img
                src={assets.logo_icon}
