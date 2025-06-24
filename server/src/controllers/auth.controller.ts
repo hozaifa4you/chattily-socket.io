@@ -122,7 +122,7 @@ const signin = async (req: Request, res: Response) => {
 };
 
 const signout = async (req: Request, res: Response) => {
-   if (req.user) {
+   if (req?.user) {
       req.user = undefined;
    }
 
