@@ -15,11 +15,18 @@ type AuthContextType = {
    token?: string;
    onlineUsers?: string[];
    socket?: Socket;
-   setToken?: (token?: string) => void;
-   setUser?: (user: User) => void;
+   setToken: (token?: string) => void;
+   setUser: (user: User) => void;
 };
 
-const initialContext: AuthContextType = {};
+const initialContext: AuthContextType = {
+   setToken: function (token?: string): void {
+      throw new Error("Function not implemented.");
+   },
+   setUser: function (user: User): void {
+      throw new Error("Function not implemented.");
+   },
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<AuthContextType>(initialContext);

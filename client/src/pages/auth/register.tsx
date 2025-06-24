@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import assets from "../../assets/assets";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/auth-context";
 
 const RegisterPage = () => {
    const [fullName, setFullName] = useState("");
@@ -8,11 +9,19 @@ const RegisterPage = () => {
    const [password, setPassword] = useState("");
    const [bio, setBio] = useState("");
    const [isSubmitted, setIsSubmitted] = useState(false);
+   const navigate = useNavigate();
+   const auth = useContext(AuthContext);
 
    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       setIsSubmitted(true);
    };
+
+   useEffect(() => {
+      if (auth.token && auth.user) {
+         navigate("/");
+      }
+   }, [auth.token, auth.user, navigate]);
 
    return (
       <div className="flex h-full min-h-screen items-center justify-center gap-8 bg-cover bg-center backdrop-blur-2xl max-sm:flex-col sm:justify-evenly">

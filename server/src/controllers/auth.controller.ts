@@ -109,8 +109,12 @@ const signin = async (req: Request, res: Response) => {
       }
 
       const token = generateToken(user.id);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...rest } = user;
 
-      return res.status(200).json({ token, user, message: 'Login successful' });
+      return res
+         .status(200)
+         .json({ token, user: rest, message: 'Login successful' });
    } catch (error) {
       log(error);
       return res.status(400).json({
