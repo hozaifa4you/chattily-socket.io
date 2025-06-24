@@ -9,7 +9,7 @@ export const avatarUploader = (req: Request, res: Response) => {
          .json({ success: false, message: 'File not found' });
    }
 
-   const fileUrl = getUrlPath(filename, 'avatar');
+   const fileUrl = getUrlPath(filename, 'avatars');
 
    res.status(201).json({ avatar: filename, avatarUrl: fileUrl });
 };

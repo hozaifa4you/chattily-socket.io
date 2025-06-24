@@ -8,7 +8,9 @@ import http from 'http';
 import path from 'path';
 import { authRoutes } from '@/routes/auth.route';
 import { uploadRouter } from '@/routes/upload.route';
-import { profileRoutes } from './routes/profile.route';
+import { profileRoutes } from '@/routes/profile.route';
+import { messageRoutes } from '@/routes/message.route';
+import { userRoutes } from '@/routes/user.route';
 
 const app = express();
 const server = http.createServer(app);
@@ -30,8 +32,10 @@ app.get('/', (_req: Request, res: Response) => {
 });
 
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/profile', profileRoutes);
 app.use('/api/v1/uploads', uploadRouter);
+app.use('/api/v1/messages', messageRoutes);
 
 server.listen(process.env.PORT ?? 3030, () => {
    log(`Server is running on port ${port}`);

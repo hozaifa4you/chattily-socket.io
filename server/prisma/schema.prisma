@@ -40,4 +40,6 @@ model Message {
 
 model Analytic {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  @@map("Analytics")
 }
