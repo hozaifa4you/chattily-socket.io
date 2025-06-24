@@ -2,6 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import assets from "../../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
+import { axiosInstance } from "../../lib/axios";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 const RegisterPage = () => {
    const [fullName, setFullName] = useState("");
@@ -9,12 +12,45 @@ const RegisterPage = () => {
    const [password, setPassword] = useState("");
    const [bio, setBio] = useState("");
    const [isSubmitted, setIsSubmitted] = useState(false);
+   const [isChecked, setIsChecked] = useState(false);
    const navigate = useNavigate();
    const auth = useContext(AuthContext);
 
    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+
+      if (!isChecked) {
+         toast.warning("Are you agree?", {
+            description: "Please read the terms and conditions.",
+         });
+         return;
+      }
+
       setIsSubmitted(true);
+
+      if (isSubmitted) {
+         try {
+            const { data } = await axiosInstance.post("/auth/register", {
+               fullName,
+               email,
+               password,
+               bio,
+            });
+
+            auth.setToken(data.token);
+            auth.setUser(data.user);
+            localStorage.setItem("token", data.token);
+            toast.success("Register Successful", {
+               description: "New user register successful",
+            });
+         } catch (error) {
+            if (error instanceof AxiosError) {
+               toast.error("Register Failed", {
+                  description: error.response?.data.message,
+               });
+            }
+         }
+      }
    };
 
    useEffect(() => {
@@ -39,11 +75,13 @@ const RegisterPage = () => {
          >
             <h2 className="flex items-center justify-between text-2xl font-medium">
                Sign up
-               <img
-                  src={assets.arrow_icon}
-                  alt="Arrow"
-                  className="w-5 cursor-pointer"
-               />
+               <button type="button" onClick={() => setIsSubmitted(false)}>
+                  <img
+                     src={assets.arrow_icon}
+                     alt="Arrow"
+                     className="w-5 cursor-pointer"
+                  />
+               </button>
             </h2>
 
             {!isSubmitted && (
@@ -101,7 +139,12 @@ const RegisterPage = () => {
             </button>
 
             <div className="flex items-center gap-2 text-sm text-gray-500">
-               <input type="checkbox" id="terms" />
+               <input
+                  type="checkbox"
+                  id="terms"
+                  checked={isChecked}
+                  onChange={(e) => setIsChecked(e.target.checked)}
+               />
                <label htmlFor="terms">
                   Agree to the terms and privacy policy?
                </label>
