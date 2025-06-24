@@ -4,6 +4,9 @@ import { Homepage } from "./pages";
 import { LoginPage } from "./pages/auth/login";
 import { RegisterPage } from "./pages/auth/register";
 import { ProfilePage } from "./pages/profile/profile";
+import { env } from "./config/env";
+
+console.log(env);
 
 const App = () => {
    return (

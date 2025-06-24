@@ -54,7 +54,7 @@ const ChatContainer = ({
          <div className="flex h-[calc(100%-120px)] flex-col overflow-y-scroll p-3 pb-6">
             {messagesDummyData.map((message) => (
                <div
-                  key={message._id}
+                  key={message.id}
                   className={cn("flex items-end justify-end gap-2", {
                      "flex-row-reverse":
                         message.senderId !== "680f50e4f10f3cd28382ecf9",
@@ -64,7 +64,7 @@ const ChatContainer = ({
                      <img
                         className="mb-8 max-w-[230px] overflow-hidden rounded-lg border border-gray-700"
                         src={message.image}
-                        alt={message._id}
+                        alt={message.id}
                      />
                   ) : (
                      <p

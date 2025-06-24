@@ -49,14 +49,14 @@ const Sidebar = ({ selectedUser, setSelectedUser }: SidebarProps) => {
             <div className="flex flex-col">
                {userDummyData.map((user, index) => (
                   <div
-                     key={user._id}
+                     key={user.id}
                      onClick={() => {
                         setSelectedUser(user);
                      }}
                      className={cn(
                         "relative flex cursor-pointer items-center gap-2 rounded p-2 pl-4 max-sm:text-sm",
                         {
-                           "bg-[#282142]/50": selectedUser?._id === user._id,
+                           "bg-[#282142]/50": selectedUser?.id === user.id,
                         },
                      )}
                   >

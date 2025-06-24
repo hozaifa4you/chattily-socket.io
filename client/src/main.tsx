@@ -4,11 +4,16 @@ import { BrowserRouter } from "react-router-dom";
 
 import "./index.css";
 import App from "./App.tsx";
+import { Toaster } from "sonner";
+import { AuthContextProvider } from "./context/auth-context.tsx";
 
 createRoot(document.getElementById("root")!).render(
    <StrictMode>
-      <BrowserRouter>
-         <App />
-      </BrowserRouter>
+      <AuthContextProvider>
+         <BrowserRouter>
+            <Toaster closeButton richColors position="top-right" />
+            <App />
+         </BrowserRouter>
+      </AuthContextProvider>
    </StrictMode>,
 );
