@@ -3,24 +3,14 @@ import type { User } from "../../assets/assets";
 import assets, { imagesDummyData } from "../../assets/assets";
 import { cn } from "../../lib/utils";
 import { AuthContext } from "../../context/auth-context";
-import { toast } from "sonner";
 
 interface RightSidebarProps {
    selectedUser?: User;
 }
 
 const RightSidebar = ({ selectedUser }: RightSidebarProps) => {
-   const { setToken, setUser, socket, setOnlineUsers } =
-      useContext(AuthContext);
+   const { logout } = useContext(AuthContext);
 
-   const handleLogout = () => {
-      setToken(undefined);
-      setUser(undefined);
-      setOnlineUsers([]);
-      socket?.disconnect();
-      localStorage.removeItem("token");
-      toast.info("Logout Successful", { description: "Successfully logout" });
-   };
    return (
       <div
          className={cn(
@@ -62,7 +52,7 @@ const RightSidebar = ({ selectedUser }: RightSidebarProps) => {
          </div>
 
          <button
-            onClick={handleLogout}
+            onClick={logout}
             type="button"
             className="absolute bottom-5 left-1/2 -translate-x-1/2 transform cursor-pointer rounded-full border-none bg-gradient-to-r from-purple-400 to-violet-600 px-20 py-2 text-sm font-light text-white"
          >

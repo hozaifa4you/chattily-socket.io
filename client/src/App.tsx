@@ -1,21 +1,31 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import { Homepage } from "./pages";
 import { LoginPage } from "./pages/auth/login";
 import { RegisterPage } from "./pages/auth/register";
 import { ProfilePage } from "./pages/profile/profile";
-import { env } from "./config/env";
-
-console.log(env);
+import { useContext } from "react";
+import { AuthContext } from "./context/auth-context";
 
 const App = () => {
+   const { token } = useContext(AuthContext);
+
    return (
       <div className="bg-[url(./assets/bgImage.svg)] bg-contain">
          <Routes>
             <Route path="/" element={<Homepage />} />
-            <Route path="login" element={<LoginPage />} />
-            <Route path="register" element={<RegisterPage />} />
-            <Route path="profile" element={<ProfilePage />} />
+            <Route
+               path="/login"
+               element={!token ? <LoginPage /> : <Navigate to="/" />}
+            />
+            <Route
+               path="/register"
+               element={!token ? <RegisterPage /> : <Navigate to="/" />}
+            />
+            <Route
+               path="profile"
+               element={token ? <ProfilePage /> : <Navigate to="/login" />}
+            />
          </Routes>
       </div>
    );

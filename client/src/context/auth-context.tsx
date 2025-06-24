@@ -9,6 +9,7 @@ import type { User } from "../types/user";
 import { authCheck } from "../lib/axios";
 import { io, type Socket } from "socket.io-client";
 import { env } from "../config/env";
+import { toast } from "sonner";
 
 type AuthContextType = {
    user?: User;
@@ -19,6 +20,7 @@ type AuthContextType = {
    setUser: (user?: User) => void;
    connectSocket: (user: User) => void;
    setOnlineUsers: (userIds: string[]) => void;
+   logout: () => void;
 };
 
 const initialContext: AuthContextType = {
@@ -32,6 +34,9 @@ const initialContext: AuthContextType = {
       throw new Error("Function not implemented.");
    },
    setOnlineUsers: function (): void {
+      throw new Error("Function not implemented.");
+   },
+   logout: function (): void {
       throw new Error("Function not implemented.");
    },
 };
@@ -67,16 +72,14 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
       };
    }, []);
 
-   useEffect(() => {
-      if (token) {
-         authCheck(token).then((authUser) => {
-            if (authUser) {
-               setUser(authUser);
-               connectSocket(authUser);
-            }
-         });
-      }
-   }, [connectSocket, token]);
+   const logout = () => {
+      setToken(undefined);
+      setUser(undefined);
+      setOnlineUsers([]);
+      socket?.disconnect();
+      localStorage.removeItem("token");
+      toast.info("Logout Successful", { description: "Successfully logout" });
+   };
 
    const contextValues: AuthContextType = {
       token,
@@ -87,7 +90,19 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
       setUser,
       connectSocket,
       setOnlineUsers,
+      logout,
    };
+
+   useEffect(() => {
+      if (token) {
+         authCheck(token).then((authUser) => {
+            if (authUser) {
+               setUser(authUser);
+               connectSocket(authUser);
+            }
+         });
+      }
+   }, [connectSocket, token]);
 
    useEffect(() => {
       return () => {

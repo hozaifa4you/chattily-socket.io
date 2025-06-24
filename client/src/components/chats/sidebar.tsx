@@ -1,5 +1,8 @@
+import { useContext } from "react";
 import assets, { userDummyData, type User } from "../../assets/assets";
 import { cn } from "../../lib/utils";
+import { AuthContext } from "../../context/auth-context";
+import { Link } from "react-router-dom";
 
 interface SidebarProps {
    selectedUser?: User;
@@ -7,6 +10,8 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ selectedUser, setSelectedUser }: SidebarProps) => {
+   const { logout } = useContext(AuthContext);
+
    return (
       <div
          className={cn(
@@ -26,11 +31,17 @@ const Sidebar = ({ selectedUser, setSelectedUser }: SidebarProps) => {
                      className="max-h-5 cursor-pointer"
                   />
                   <div className="absolute top-full right-0 z-20 hidden w-32 rounded-md border border-gray-600 bg-[#282142] p-5 text-gray-100 group-hover:block">
-                     <a className="cursor-pointer text-sm" href="profile">
+                     <Link className="cursor-pointer text-sm" to="/profile">
                         Edit Profile
-                     </a>
+                     </Link>
                      <hr className="my-2 border-t border-t-gray-500" />
-                     <a className="cursor-pointer text-sm">Logout</a>
+                     <button
+                        onClick={logout}
+                        type="button"
+                        className="cursor-pointer text-sm"
+                     >
+                        Logout
+                     </button>
                   </div>
                </div>
             </div>

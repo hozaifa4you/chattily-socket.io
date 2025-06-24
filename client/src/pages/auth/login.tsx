@@ -1,17 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import assets from "../../assets/assets";
-import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
 import { axiosInstance } from "../../lib/axios";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
    const [isSubmitted, setIsSubmitted] = useState(false);
-   const { setToken, token, user, setUser, connectSocket } =
-      useContext(AuthContext);
-   const navigate = useNavigate();
+   const { setToken, setUser } = useContext(AuthContext);
 
    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -35,12 +33,6 @@ const LoginPage = () => {
          });
       }
    };
-
-   useEffect(() => {
-      if (token && user) {
-         navigate("/");
-      }
-   }, [navigate, token, user]);
 
    return (
       <div className="flex h-full min-h-screen items-center justify-center gap-8 bg-cover bg-center backdrop-blur-2xl max-sm:flex-col sm:justify-evenly">
