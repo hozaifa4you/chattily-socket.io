@@ -3,6 +3,7 @@ import { log } from 'console';
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { io, userSocketMap } from '@/index';
+import { getUrlPath } from '@/lib/utils';
 
 const getMessages = async (req: Request, res: Response) => {
    const auth = req.user;
@@ -29,6 +30,13 @@ const getMessages = async (req: Request, res: Response) => {
    await prisma.message.updateMany({
       where: { senderId: targetId, receiverId: auth.id },
       data: { seen: true },
+   });
+
+   messages.forEach((message) => {
+      if (message.image) {
+         const imageUrl = getUrlPath(message.image, 'messages');
+         message.image = imageUrl;
+      }
    });
 
    return res.status(200).json(messages);
@@ -95,6 +103,11 @@ const sendMessage = async (req: Request, res: Response) => {
             receiverId: targetId,
          },
       });
+
+      if (message.image) {
+         const imageUrl = getUrlPath(message.image, 'messages');
+         message.image = imageUrl;
+      }
 
       // using socket
       const receiverSocketId = userSocketMap[targetId];

@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { log } from 'console';
-import { generateToken, getUrlPath } from '@/lib/utils';
+import { generateToken } from '@/lib/utils';
 
 const signup = async (req: Request, res: Response) => {
    const body = req.body;
@@ -135,14 +135,7 @@ const authCheck = async (req: Request, res: Response) => {
       });
    }
 
-   const data = { ...auth };
-
-   if (auth?.profilePic) {
-      const profileUrl = getUrlPath(auth.profilePic, 'avatars');
-      data.profilePic = profileUrl;
-   }
-
-   return res.status(200).json({ user: data, success: true });
+   return res.status(200).json({ user: auth, success: true });
 };
 
 export { signup, signin, authCheck };

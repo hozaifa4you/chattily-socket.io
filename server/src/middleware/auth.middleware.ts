@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
    const token = req.headers.token;
    if (!token) {
-      return res.status(404).json({
+      return res.status(401).json({
          success: false,
          message: 'Unauthorized',
          error: 'Token not provided',

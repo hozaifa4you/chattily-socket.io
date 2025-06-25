@@ -19,6 +19,7 @@ const findUsers = async (req: Request, res: Response) => {
             { fullName: { contains: search, mode: 'insensitive' } },
             { email: { contains: search, mode: 'insensitive' } },
          ],
+         NOT: { id: req.user?.id },
       },
       take: 10,
       select: { id: true, fullName: true, profilePic: true, email: true },
@@ -71,11 +72,11 @@ const getConnectedUsers = async (req: Request, res: Response) => {
    });
 
    const result = users.map((user) => ({
-      user,
+      ...user,
       unseenCount: unseenMap.get(user.id) || 0,
    }));
 
-   return result;
+   return res.status(200).json(result);
 };
 
 export { findUsers, getConnectedUsers };

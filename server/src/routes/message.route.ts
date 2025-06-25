@@ -22,7 +22,7 @@ messageRoutes.post(
 );
 
 messageRoutes.patch(
-   '/mark/:id',
+   '/:id',
    auth as unknown as RequestHandler,
    markMessageSeen as unknown as RequestHandler,
 );
