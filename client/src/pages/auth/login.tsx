@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
 const LoginPage = () => {
+   const [isLoading, setIsLoading] = useState(false);
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
    const [isSubmitted, setIsSubmitted] = useState(false);
@@ -15,12 +16,11 @@ const LoginPage = () => {
       e.preventDefault();
 
       try {
+         setIsLoading(true);
          const { data } = await axiosInstance.post("/auth/login", {
             email,
             password,
          });
-
-         console.log(data);
 
          setToken(data.token);
          setUser(data.user);
@@ -31,6 +31,8 @@ const LoginPage = () => {
          toast.error("Login Failed", {
             description: (error as unknown as Error).message,
          });
+      } finally {
+         setIsLoading(false);
       }
    };
 
@@ -87,7 +89,7 @@ const LoginPage = () => {
                className="cursor-pointer rounded-md bg-purple-400 bg-gradient-to-r to-violet-600 py-3 text-white"
                type="submit"
             >
-               Login Now
+               {isLoading ? "Loading..." : "Login Now"}
             </button>
 
             <div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { User } from "../types/user";
+import type { User } from "../types/types";
 import { io, Socket } from "socket.io-client";
 import { env } from "../config/env";
 

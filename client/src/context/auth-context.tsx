@@ -5,7 +5,7 @@ import {
    useState,
    type PropsWithChildren,
 } from "react";
-import type { User } from "../types/user";
+import type { User } from "../types/types";
 import { authCheck } from "../lib/axios";
 import { io, type Socket } from "socket.io-client";
 import { env } from "../config/env";

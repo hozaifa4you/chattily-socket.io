@@ -1,19 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import moment from "moment";
-import type { User } from "../../assets/assets";
 import assets, { messagesDummyData } from "../../assets/assets";
 import { cn } from "../../lib/utils";
+import { ChatContext } from "../../context/chat-context";
+import { AuthContext } from "../../context/auth-context";
 
-interface ChatContainerProps {
-   selectedUser?: User;
-   setSelectedUser: (value: User | undefined) => void;
-}
-
-const ChatContainer = ({
-   selectedUser,
-   setSelectedUser,
-}: ChatContainerProps) => {
+const ChatContainer = () => {
+   const [input, setInput] = useState("");
    const scrollEnd = useRef<HTMLDivElement>(null);
+   const { selectedUser, setSelectedUser } = useContext(ChatContext);
+   const { onlineUsers } = useContext(AuthContext);
 
    useEffect(() => {
       if (scrollEnd.current) {
@@ -28,20 +24,25 @@ const ChatContainer = ({
          {/* header */}
          <div className="mx-4 flex items-center gap-3 border-b border-b-slate-500 py-3">
             <img
-               src={assets.profile_martin}
+               src={selectedUser.profilePic ?? assets.avatar_icon}
                alt="Martin Johnson"
                className="w-8 rounded-full"
             />
             <p className="flex flex-1 items-center gap-2 text-lg text-white">
-               Martin Johnson{" "}
-               <span className="size-2 rounded-full bg-green-500"></span>
+               {selectedUser.fullName}
+               <span
+                  className={cn("size-2 rounded-full", {
+                     "bg-green-500": onlineUsers?.includes(selectedUser.id),
+                     "bg-red-500": !onlineUsers?.includes(selectedUser.id),
+                  })}
+               ></span>
             </p>
 
             <img
                src={assets.arrow_icon}
                alt="Chat"
                className="max-w-7 cursor-pointer md:hidden"
-               onClick={() => setSelectedUser(undefined)}
+               onClick={() => setSelectedUser(null)}
             />
             <img
                src={assets.help_icon}
@@ -116,6 +117,8 @@ const ChatContainer = ({
                   type="text"
                   placeholder="Send a message"
                   className="flex-1 rounded-lg border-none p-3 text-sm text-white placeholder-gray-400 outline-none"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
                />
                <input
                   type="file"

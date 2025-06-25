@@ -1,7 +1,7 @@
 import axios from "axios";
 import { env } from "../config/env";
 import { toast } from "sonner";
-import type { User } from "../types/user";
+import type { User } from "../types/types";
 
 export const axiosInstance = axios.create({
    baseURL: env.backendUrl + "/api/v1",

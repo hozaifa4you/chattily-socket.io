@@ -1,15 +1,26 @@
-import { useContext } from "react";
-import type { User } from "../../assets/assets";
+import { useContext, useEffect, useState } from "react";
 import assets, { imagesDummyData } from "../../assets/assets";
 import { cn } from "../../lib/utils";
 import { AuthContext } from "../../context/auth-context";
+import { ChatContext } from "../../context/chat-context";
+import { axiosInstance } from "../../lib/axios";
 
-interface RightSidebarProps {
-   selectedUser?: User;
-}
+const RightSidebar = () => {
+   const { logout, token } = useContext(AuthContext);
+   const { selectedUser } = useContext(ChatContext);
+   const [bio, setBio] = useState("");
 
-const RightSidebar = ({ selectedUser }: RightSidebarProps) => {
-   const { logout } = useContext(AuthContext);
+   useEffect(() => {
+      const getProfile = async () => {
+         const { data } = await axiosInstance.get("/profile", {
+            headers: { token },
+         });
+
+         setBio(data.bio ?? "");
+      };
+
+      getProfile();
+   }, [token]);
 
    return (
       <div
@@ -31,16 +42,20 @@ const RightSidebar = ({ selectedUser }: RightSidebarProps) => {
                {selectedUser?.fullName}
             </h1>
 
-            <p className="mx-auto px-10 text-center">{selectedUser?.bio}</p>
+            <p className="mx-auto px-10 text-center">{bio}</p>
          </div>
 
          <hr className="my-4 border-[#ffffff50]" />
 
          <div className="px-5 text-xs">
             <p>Medias</p>
-            <div className="mt-2 grid max-h-[200px] grid-cols-2 gap-4 overflow-y-scroll opacity-80">
+            <div className="mt-2 grid max-h-[200px] grid-cols-2 gap-4 overflow-y-scroll">
                {imagesDummyData.map((url) => (
-                  <div key={url} onClick={() => window.open(url)}>
+                  <div
+                     key={url}
+                     onClick={() => window.open(url)}
+                     className="opacity-80 transition-all duration-200 hover:opacity-100"
+                  >
                      <img
                         src={url}
                         alt="Media"

@@ -14,8 +14,6 @@ const ProfilePage = () => {
    const [bio, setBio] = useState("");
    const [profilePic, setProfilePic] = useState<string>("");
 
-   console.log(profilePic);
-
    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
       e.preventDefault();
       setIsLoading(true);
@@ -156,7 +154,7 @@ const ProfilePage = () => {
                </button>
             </form>
             <img
-               src={assets.logo_icon}
+               src={profilePic ?? assets.logo_icon}
                alt="Logo"
                className="mx-10 aspect-square max-w-44 rounded-full max-sm:mt-10"
             />
