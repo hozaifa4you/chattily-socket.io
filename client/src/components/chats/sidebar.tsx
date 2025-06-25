@@ -12,8 +12,14 @@ const Sidebar = () => {
    const { logout, onlineUsers, token } = useContext(AuthContext);
    const [searchTerm, setSearchTerm] = useState("");
    const [searchUsers, setSearchUsers] = useState<User[]>([]);
-   const { users, getUsers, selectedUser, setSelectedUser, unseenMessages } =
-      useContext(ChatContext);
+   const {
+      users,
+      getUsers,
+      selectedUser,
+      setSelectedUser,
+      unseenMessages,
+      setUnseenMessages,
+   } = useContext(ChatContext);
 
    const handleSearch = debounce(async (e) => {
       const searchTerm = e.target.value.toLowerCase();
@@ -29,6 +35,7 @@ const Sidebar = () => {
 
    useEffect(() => {
       getUsers();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [onlineUsers]);
 
    return (
@@ -87,7 +94,14 @@ const Sidebar = () => {
                               <div
                                  key={user.id}
                                  className="flex cursor-pointer items-center justify-between gap-2 rounded border-b border-b-[#3f3f3f] p-2 pl-4 last:border-b-0 hover:bg-[#282142]/50 max-sm:text-sm"
-                                 onClick={() => setSelectedUser(user)}
+                                 onClick={() => {
+                                    setSelectedUser(user);
+                                    setUnseenMessages((prev) => ({
+                                       ...prev,
+                                       [user.id]: 0,
+                                    }));
+                                    setSearchTerm("");
+                                 }}
                               >
                                  <div className="flex items-center gap-2">
                                     <img
@@ -99,21 +113,16 @@ const Sidebar = () => {
                                     />
                                     <div className="flex flex-col leading-5">
                                        <p>{user.fullName}</p>
-                                       <span className="text-xs text-neutral-400">
-                                          {user.email}
-                                       </span>
+                                       {onlineUsers?.includes(user.id) ? (
+                                          <span className="text-xs text-green-400">
+                                             Online
+                                          </span>
+                                       ) : (
+                                          <span className="text-xs text-neutral-400">
+                                             Offline
+                                          </span>
+                                       )}
                                     </div>
-                                 </div>
-                                 <div>
-                                    {onlineUsers?.includes(user.id) ? (
-                                       <span className="text-xs text-green-400">
-                                          Online
-                                       </span>
-                                    ) : (
-                                       <span className="text-xs text-neutral-400">
-                                          Offline
-                                       </span>
-                                    )}
                                  </div>
                               </div>
                            ))
@@ -129,7 +138,7 @@ const Sidebar = () => {
 
             {/* Chat List */}
             <div className="flex flex-col">
-               {users.map((user, index) => (
+               {users.map((user) => (
                   <div
                      key={user.id}
                      onClick={() => {

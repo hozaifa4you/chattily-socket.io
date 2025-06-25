@@ -1,14 +1,22 @@
 import { useContext, useEffect, useState } from "react";
-import assets, { imagesDummyData } from "../../assets/assets";
+import assets from "../../assets/assets";
 import { cn } from "../../lib/utils";
 import { AuthContext } from "../../context/auth-context";
 import { ChatContext } from "../../context/chat-context";
 import { axiosInstance } from "../../lib/axios";
 
 const RightSidebar = () => {
-   const { logout, token } = useContext(AuthContext);
-   const { selectedUser } = useContext(ChatContext);
+   const { logout, token, onlineUsers } = useContext(AuthContext);
+   const { selectedUser, messages } = useContext(ChatContext);
    const [bio, setBio] = useState("");
+
+   const getImages = () => {
+      const images = messages
+         .filter((msg) => msg.image && msg.image.length > 0)
+         .map((msg) => msg.image);
+
+      return images;
+   };
 
    useEffect(() => {
       const getProfile = async () => {
@@ -37,8 +45,17 @@ const RightSidebar = () => {
                alt={selectedUser?.fullName}
                className="aspect-square w-20 rounded-full"
             />
-            <h1 className="mx-auto flex items-center gap-2 px-10 text-xl font-medium">
-               <span className="block size-2 rounded-full bg-green-500"></span>
+            <h1 className="px-10 text-center text-xl font-medium">
+               <span
+                  className={cn("mr-2 inline-block size-2 rounded-full", {
+                     "bg-green-500": onlineUsers?.includes(
+                        selectedUser?.id as string,
+                     ),
+                     "bg-red-500": !onlineUsers?.includes(
+                        selectedUser?.id as string,
+                     ),
+                  })}
+               ></span>
                {selectedUser?.fullName}
             </h1>
 
@@ -49,15 +66,15 @@ const RightSidebar = () => {
 
          <div className="px-5 text-xs">
             <p>Medias</p>
-            <div className="mt-2 grid max-h-[200px] grid-cols-2 gap-4 overflow-y-scroll">
-               {imagesDummyData.map((url) => (
+            <div className="mt-2 grid max-h-[200px] grid-cols-2 gap-2 overflow-y-scroll">
+               {getImages().map((url) => (
                   <div
                      key={url}
-                     onClick={() => window.open(url)}
+                     onClick={() => window.open(url!)}
                      className="opacity-80 transition-all duration-200 hover:opacity-100"
                   >
                      <img
-                        src={url}
+                        src={url!}
                         alt="Media"
                         className="cursor-pointer rounded-md"
                      />

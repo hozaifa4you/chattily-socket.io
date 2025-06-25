@@ -30,7 +30,7 @@ const initialContext: AuthContextType = {
    setUser: function (): void {
       throw new Error("Function not implemented.");
    },
-   connectSocket: function (user: User): void {
+   connectSocket: function (_user: User): void {
       throw new Error("Function not implemented.");
    },
    setOnlineUsers: function (): void {

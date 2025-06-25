@@ -4,7 +4,9 @@ import {
    useContext,
    useEffect,
    useState,
+   type Dispatch,
    type PropsWithChildren,
+   type SetStateAction,
 } from "react";
 import { AuthContext } from "./auth-context";
 import { axiosInstance } from "../lib/axios";
@@ -31,18 +33,19 @@ type ChatContextType = {
    subscribeToMessage: () => void;
    unsubscribeToMessage: () => void;
    unseenMessages: Record<string, number>;
+   setUnseenMessages: Dispatch<React.SetStateAction<Record<string, number>>>;
 };
 
 const defaultChatContext: ChatContextType = {
    getUsers: function (): Promise<void> {
       throw new Error("Function not implemented.");
    },
-   getMessages: function (targetId: string): Promise<void> {
+   getMessages: function (_targetId: string): Promise<void> {
       throw new Error("Function not implemented.");
    },
    sendMessage: function (
-      targetId: string,
-      message: {
+      _targetId: string,
+      _message: {
          text?: string | undefined;
          image?: File | undefined;
       },
@@ -57,14 +60,19 @@ const defaultChatContext: ChatContextType = {
    },
    messages: [],
    users: [],
-   setMessages: function (message: Message[]): void {
+   setMessages: function (_message: Message[]): void {
       throw new Error("Function not implemented.");
    },
    selectedUser: null,
-   setSelectedUser: function (user: User | null): void {
+   setSelectedUser: function (_user: User | null): void {
       throw new Error("Function not implemented.");
    },
    unseenMessages: {},
+   setUnseenMessages: function (
+      _value: SetStateAction<Record<string, number>>,
+   ): void {
+      throw new Error("Function not implemented.");
+   },
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -169,6 +177,7 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
       setSelectedUser,
       users,
       unseenMessages,
+      setUnseenMessages,
    };
 
    useEffect(() => {
