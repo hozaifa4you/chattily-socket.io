@@ -89,7 +89,9 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
 
    const getMessages = async (targetId: string) => {
       try {
-         const { data } = await axiosInstance.get(`/messages/${targetId}`);
+         const { data } = await axiosInstance.get(`/messages/${targetId}`, {
+            headers: { token },
+         });
 
          setMessages(data);
       } catch (error) {
@@ -125,7 +127,8 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
       } catch (error) {
          if (error instanceof AxiosError) {
             toast.error("Send Message", {
-               description: error.response?.data.message,
+               description:
+                  error.response?.data.message ?? "File not more than 1mb",
             });
          }
       }

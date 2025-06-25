@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import moment from "moment";
-import assets, { messagesDummyData } from "../../assets/assets";
+import assets from "../../assets/assets";
 import { cn } from "../../lib/utils";
 import { ChatContext } from "../../context/chat-context";
 import { AuthContext } from "../../context/auth-context";
@@ -8,8 +8,37 @@ import { AuthContext } from "../../context/auth-context";
 const ChatContainer = () => {
    const [input, setInput] = useState("");
    const scrollEnd = useRef<HTMLDivElement>(null);
-   const { selectedUser, setSelectedUser } = useContext(ChatContext);
-   const { onlineUsers } = useContext(AuthContext);
+   const { selectedUser, setSelectedUser, sendMessage, getMessages, messages } =
+      useContext(ChatContext);
+   const { onlineUsers, user } = useContext(AuthContext);
+
+   const handleSendMessage = async () => {
+      if (input.trim() === "") return;
+
+      await sendMessage(selectedUser?.id as string, {
+         text: input.trim(),
+      });
+
+      setInput("");
+   };
+
+   const handleSendImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+         await sendMessage(selectedUser?.id as string, { image: file });
+         setInput("");
+         scrollEnd.current?.scrollIntoView({
+            behavior: "smooth",
+         });
+      }
+   };
+
+   useEffect(() => {
+      if (selectedUser) {
+         getMessages(selectedUser.id);
+         scrollEnd.current?.scrollIntoView({ behavior: "smooth" });
+      }
+   }, [selectedUser]);
 
    useEffect(() => {
       if (scrollEnd.current) {
@@ -53,31 +82,26 @@ const ChatContainer = () => {
 
          {/* chat messages */}
          <div className="flex h-[calc(100%-120px)] flex-col overflow-y-scroll p-3 pb-6">
-            {messagesDummyData.map((message) => (
+            {messages.map((message) => (
                <div
                   key={message.id}
-                  className={cn("flex items-end justify-end gap-2", {
-                     "flex-row-reverse":
-                        message.senderId !== "680f50e4f10f3cd28382ecf9",
+                  className={cn("flex items-end justify-end gap-1", {
+                     "flex-row-reverse": message.senderId !== user?.id,
                   })}
                >
                   {message.image ? (
                      <img
-                        className="mb-8 max-w-[230px] overflow-hidden rounded-lg border border-gray-700"
+                        className="mb-4 max-w-[230px] overflow-hidden rounded-lg border border-gray-700"
                         src={message.image}
                         alt={message.id}
                      />
                   ) : (
                      <p
                         className={cn(
-                           "mb-8 max-w-[200px] rounded-lg bg-violet-500/30 p-2 font-light break-all text-white md:text-sm",
+                           "mb-4 max-w-[200px] rounded-lg bg-violet-500/30 p-2 font-light break-all text-white md:text-sm",
                            {
-                              "rounded-br-none":
-                                 message.senderId ===
-                                 "680f50e4f10f3cd28382ecf9",
-                              "rounded-bl-none":
-                                 message.senderId !==
-                                 "680f50e4f10f3cd28382ecf9",
+                              "rounded-br-none": message.senderId === user?.id,
+                              "rounded-bl-none": message.senderId !== user?.id,
                            },
                         )}
                      >
@@ -87,16 +111,15 @@ const ChatContainer = () => {
 
                   <div
                      className={cn("flex flex-col text-center text-xs", {
-                        "items-end":
-                           message.senderId === "680f50e4f10f3cd28382ecf9",
+                        "items-end": message.senderId === user?.id,
                      })}
                   >
                      <img
-                        className="w-7 rounded-full"
+                        className="size-7 rounded-full object-cover object-center"
                         src={
-                           message.senderId === "680f50e4f10f3cd28382ecf9"
-                              ? assets.avatar_icon
-                              : assets.profile_martin
+                           message.senderId === user?.id
+                              ? (user.profilePic ?? assets.avatar_icon)
+                              : (selectedUser.profilePic ?? assets.avatar_icon)
                         }
                         alt="Profile"
                      />
@@ -119,12 +142,18 @@ const ChatContainer = () => {
                   className="flex-1 rounded-lg border-none p-3 text-sm text-white placeholder-gray-400 outline-none"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                     if (e.key === "Enter" && input.trim()) {
+                        handleSendMessage();
+                     }
+                  }}
                />
                <input
                   type="file"
                   id="image"
-                  accept="image/png,image/jpeg"
+                  accept="image/png,image/jpeg,image/jpg,image/webp"
                   hidden
+                  onChange={handleSendImage}
                />
                <label htmlFor="image">
                   <img
@@ -134,11 +163,9 @@ const ChatContainer = () => {
                   />
                </label>
             </div>
-            <img
-               src={assets.send_button}
-               alt="Send"
-               className="w-7 cursor-pointer"
-            />
+            <button onClick={handleSendMessage} className="cursor-pointer">
+               <img src={assets.send_button} alt="Send" className="w-7" />
+            </button>
          </div>
       </div>
    ) : (
